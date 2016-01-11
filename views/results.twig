@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js"><!-- (class="no-js" is a Modernizr detect) -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="description" name="James Nielson is a web developer and media production professional.">
+
+  <title>Webcraft &amp; Media Dev</title>
+
+  <!-- CSS & STYLES & FONTS & ETCETERAS ===================================  -->
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto+Slab">
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
+  <!-- <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/simple-slideshow-styles.css">
+
+  <!-- JS -->
+    <script>/* SHRINKY HEAD */
+      function init() {
+        window.addEventListener('scroll', function(e){
+          var distanceY = window.pageYOffset || document.documentElement.scrollTop,
+          shrinkOn = 100,
+          header = document.querySelector("header");
+          nav = document.querySelector("nav");
+          if (distanceY > shrinkOn) {
+            classie.add(header,"smaller");
+            classie.add(nav,"smaller");
+          } else {
+            if (classie.has(header,"smaller")) {
+              classie.remove(header,"smaller");
+              classie.remove(nav,"smaller");
+            }
+          }
+        });
+      }
+      window.onload = init();
+    </script>
+</head><!--=================== /HEAD ======================================= -->
+
+<body><!--=================== THE BOD ====================================== -->
+  <div class="wrapper">
+  <header id="header">
+
+  </header>
+
+  <main><!-- MAIN CONTENT ================================================== -->
+    <div class="container">
+      <!-- <div class="bss-slides slideshow">
+        <figure>
+          <img src="img/slideshow/img/vidfolio/sounders.jpg" alt="Canon Beach, Oregon">
+          <figcaption>The Angular Menagerie - A project using Angular.js and Bootstrap to display and filter my figurine collection.</figcaption>
+        </figure>
+        <figure>
+          <img src="img/slideshow/img/vidfolio/miggy.jpg" alt="Miguel Cabrera, baseball mega-champion.">
+          <figcaption>Rosterize - An Angular.js project for managing coures and students.  Built with Angular, UI-Router &amp; Bootstrap.</figcaption>
+        </figure>
+      </div><!- - /SLIDSHOW -->
+      <div name="ESTIMATE" class="estimate row">
+        <h4><small>Zillow estimate for </small>{{ property.street }}:</h4>
+        <h3 class="text-success">${{ property.zestimate.amount | number_format(2) }}</h3>
+        <h6 class="text-muted">(Zillow ID {{ property.zpid }} last updated {{ property.zestimate.lastUpdated }})</h6>
+
+      <div class="row">
+        <figure class="panel">
+          <img src="{{ img }}"></img>
+          <figcaption>5-year Price Trend</figcaption>
+        </figure>
+
+      </div>
+
+
+      </div>
+
+
+      <div name="COMPARABLES" class="row">
+        {% for comp in property.comps %}
+          <div class="col-md-4">
+            {{ comp }}
+          </div>
+
+        {% else %} No properties found.
+        {% endfor %}
+      </div>
+
+    </div><!-- /CONTAINER -->
+
+  </main><!-- /MAIN -->
+
+
+  <!-- scripts -->
+    <!-- TODO: REMOVE DEV SCRIPT --><script src="http://localhost:35729/livereload.js"></script>
+    <!-- UTILITIES AND SUCHAS -->
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/better-simple-slideshow.min.js"></script>
+    <script> /*slideshow options*/ var opts = {
+        // auto : false,
+        auto : {
+          speed : 2500,
+          pauseOnHover : true
+        },
+        fullScreen : false,
+        swipe : true
+      };
+      makeBSS('.slideshow', opts);
+    </script>
+  <!-- /scripts -->
+</body>
+</html>

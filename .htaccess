@@ -1,0 +1,7 @@
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+	# ! UNCOMMENT REWRITEBASE if silex app root is in a mamp subdirectory
+	RewriteBase /projects/zillowAPI/web/
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^ web/index.php [L]
+</IfModule>
