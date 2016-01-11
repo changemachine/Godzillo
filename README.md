@@ -1,8 +1,7 @@
-# Pretty Date
+# Godzillo
 ## by James Nielson
-### Date: March 17, 2015
-#### Description
-Presents a chosen date in multiple formats.  
+### Date: Jan 11, 2016
+#### Presents data on a user-defined property address using the Zillow API.  
 
 
 #### Setup instructions
@@ -16,11 +15,11 @@ Presents a chosen date in multiple formats.
 #### License: <a href="https://github.com/twbs/bootstrap/blob/master/LICENSE">MIT</a>  
 
 #### Technologies used
-- HTML5
-- CSS3
-- Bootstrap
-- PHP (tested on PHP v 5.6.6)
-- Silex ver 1.2.3
-- Twig ver 1.18.0
-- Computers
+- PHP 5.6.6
+- Silex ver 1.3
+- Twig ver 1.23.1
+- VerticalTab's Pillow 0.1.1
+- Clockwork 1.10.1
+- Bootstrap, some CSS, and maybe some HTML.
+
 # Godzillo
