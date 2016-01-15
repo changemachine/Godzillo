@@ -16,27 +16,16 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/simple-slideshow-styles.css">
 
-  <!-- JS -->
-    <script>/* SHRINKY HEAD */
-      function init() {
-        window.addEventListener('scroll', function(e){
-          var distanceY = window.pageYOffset || document.documentElement.scrollTop,
-          shrinkOn = 100,
-          header = document.querySelector("header");
-          nav = document.querySelector("nav");
-          if (distanceY > shrinkOn) {
-            classie.add(header,"smaller");
-            classie.add(nav,"smaller");
-          } else {
-            if (classie.has(header,"smaller")) {
-              classie.remove(header,"smaller");
-              classie.remove(nav,"smaller");
-            }
-          }
-        });
-      }
-      window.onload = init();
+  <!-- MAPQUEST -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="http://www.mapquestapi.com/sdk/leaflet/v2.s/mq-map.js?key=K4OGBs1aRYREz4KccYBSm91HsSenZZze"></script>
     </script>
+  <!-- MAPBOX -->
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.2/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.2/mapbox-gl.css' rel='stylesheet' />
+  <!-- JS -->
+
 </head><!--=================== /HEAD ======================================= -->
 
 <body><!--=================== THE BOD ====================================== -->
@@ -47,65 +36,114 @@
 
   <main><!-- MAIN CONTENT ================================================== -->
     <div class="container">
-      <!-- <div class="bss-slides slideshow">
-        <figure>
-          <img src="img/slideshow/img/vidfolio/sounders.jpg" alt="Canon Beach, Oregon">
-          <figcaption>The Angular Menagerie - A project using Angular.js and Bootstrap to display and filter my figurine collection.</figcaption>
-        </figure>
-        <figure>
-          <img src="img/slideshow/img/vidfolio/miggy.jpg" alt="Miguel Cabrera, baseball mega-champion.">
-          <figcaption>Rosterize - An Angular.js project for managing coures and students.  Built with Angular, UI-Router &amp; Bootstrap.</figcaption>
-        </figure>
-      </div><!- - /SLIDSHOW -->
-      <div name="ESTIMATE" class="estimate row">
-        <h4><small>Zillow estimate for </small>{{ property.street }}:</h4>
-        <h3 class="text-success">${{ property.zestimate.amount | number_format(2) }}</h3>
-        <h6 class="text-muted">(Zillow ID {{ property.zpid }} last updated {{ property.zestimate.lastUpdated }})</h6>
-
-      <div class="row">
+    <!-- PANEL -->
+      <div class='panel panel-default row' id="{{ property.zpid }}" data-lat="{{ property.latitude }}" data-long="{{ property.longitude }}">
+        <h4 class='panel-heading'>
+          <small>Zillow estimate for </small>
+          {{ property.street }}
+        </h4>
         <figure class="panel">
-          <img src="{{ img }}"></img>
-          <figcaption>5-year Price Trend</figcaption>
+          <img src="{{ img }}"></img> <figcaption>5-year Price Trend</figcaption>
         </figure>
+        <em>${{ property.zestimate.amount | number_format }}
+          <button class='btn btn-xs btn-success'><i class="fa fa-shopping-cart"></i></button>
+        </em>
+        <h6 class="text-muted">
+          (Zillow ID {{ property.zpid }} last updated {{ property.zestimate.lastUpdated }})
+        </h6>
+        <section name="PANEL-BODY">
+          <ul class='nav nav-tabs' role='tablist'>
+            <li>
+              <a> Description</a>
+            </li>
+            <li>
+              <a>Spec</a>
+            </li>
+            <li>
+              <a><span class="glyphicon glyphicon-star"></span>Reviews</a>
+            </li>
+          </ul>
 
-      </div>
-
-
-      </div>
-
-
-      <div name="COMPARABLES" class="row">
-        {% for comp in property.comps %}
-          <div class="col-md-4">
-            {{ comp }}
+          <div class='panel-footer clearfix' ng-show='panel.isSelected(1)'>
+            Panel 1 info
           </div>
-
-        {% else %} No properties found.
-        {% endfor %}
+          <div class='panel-footer clearfix' ng-show='panel.isSelected(2)'>
+            Panel 2 info
+          </div>
+          <div class='panel-footer clearfix' ng-show='panel.isSelected(3)'>
+            Panel 3 Stuff
+          </div><!-- / reviews -->
+        </section><!-- /panel -->
       </div>
+
+
+
+      <div class="comps row"><hr>
+        <div id="map" style="height: 180px;"></div>
+        <h2>Similar Homes</h2>
+
+        {% for comp in comps %}
+          <hr>
+          <div class="comp row" id="{{comp.zpid}}" data-lat="{{comp.latitude}}" data-long="{{comp.longitude}}">
+          <h3>{{ comp.street }}
+            <small>is valued at:</small>
+            ${{ comp.zestimate.amount | number_format }}
+          </h3>
+          {{comp.latitude}}
+          <h3>{{ comp.chart.url }}</h3>
+
+          </div>
+        {% endfor %}
+      </div><!-- /comps -->
+    </div><!-- /container -->
+
+
+
+
 
     </div><!-- /CONTAINER -->
-
   </main><!-- /MAIN -->
-
-
-  <!-- scripts -->
-    <!-- TODO: REMOVE DEV SCRIPT --><script src="http://localhost:35729/livereload.js"></script>
+  <!-- SCRIPTS TODO: REMOVE DEV SCRIPT -->
+      <script   src="http://localhost:35729/livereload.js"></script>
     <!-- UTILITIES AND SUCHAS -->
-    <script src="js/jquery-2.1.4.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/better-simple-slideshow.min.js"></script>
-    <script> /*slideshow options*/ var opts = {
-        // auto : false,
-        auto : {
-          speed : 2500,
-          pauseOnHover : true
-        },
-        fullScreen : false,
-        swipe : true
-      };
-      makeBSS('.slideshow', opts);
-    </script>
-  <!-- /scripts -->
+      <script src="js/jquery-2.1.4.min.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+
+  <!-- ********** MAPS ************* -->
+    <script>
+    // LEAFLET ----
+    //     var map = L.map('map').setView([51.505, -0.09], 13);
+    //       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    //         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    //         maxZoom: 18,
+    //         id: 'your.mapbox.project.id',
+    //         accessToken: 'your.mapbox.public.access.token'
+    //       }).addTo(map);
+    //
+  // MAPBOX REQUIRES JS & CSS IN HEADER + <div id='maps'>
+      mapboxgl.accessToken = 'pk.eyJ1IjoibWVnYWZhdW5hIiwiYSI6ImNpamV1NHpjczAwMGR1Nm01Z2UwYmQ1NzQifQ.FzHJForz0fEwjqHXPOkjOg';
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/streets-v8', //stylesheet location
+        center: [-74.50, 40], // starting position
+        zoom: 9 // starting zoom
+      });
+
+  // MAPQUEST ----
+      // window.onload = function() {
+      //   var latitude = {{ comp.latitude }};
+      //   var longitude = 'gato';
+      //   console.log(longitude);
+      //   // var longitude = 40.731701;
+      //   // var latitude = -73.993411;
+      //   // L.map('map', {
+      //   //   layers: MQ.mapLayer(),
+      //   //   center: [ longitude, latitude ],
+      //   //   zoom: 12
+      //   // });
+      // };
+
+  </script>
+  <!-- // SCRIPTS -->
 </body>
 </html>

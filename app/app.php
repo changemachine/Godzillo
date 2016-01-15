@@ -32,18 +32,13 @@ function priceFormat($number){
     $s = new VerticalTab\Pillow\Service($key);
     $results = $s->getSearchResults('8125 NE Wygant St', '97218');
     $property = $results->current();
-
-    // "Results:" . PHP_EOL;
-    // echo "Zillow ID:  " . $property->zpid . PHP_EOL."<br>";
-    // echo "City:       " . $property->city . PHP_EOL."<br>";
-    // echo "Estimate:  $" . $property->zestimate->amount . PHP_EOL."<br>";
     // echo "<img src='" . $property->chart->url . "'></img><br>";
 
     return $app['twig']->render('home.twig', array('today' => $today));
   });
 
 //Results
-  $app->post("/result", function() use ($app) {
+  $app->post("/results", function() use ($app) {
     $today = date('l, F jS, Y');
     $address = $_POST['address'];
     $citystate = $_POST['citystate'];
@@ -53,11 +48,21 @@ function priceFormat($number){
     $s = new VerticalTab\Pillow\Service($key);
     $results = $s->getSearchResults($address, $citystate);
     $property = $results->current();
-
     $img = $property->chart->url;
-    // var_dump($property->chart->url);
+    /* Can't use $p->ch->url in twig. Matter of 'pre-instanciation'?
+    isset? http://twig.sensiolabs.org/doc/recipes.html#using-dynamic-object-properties */
+    $comps = [];
+    foreach($property->comps as $comp) {// formerly "as key=>value pair"
+      array_push($comps, $comp);
+      // echo "<img src='".$comp->chart->url."'></img> | ".$comp->address." | $".$comp->zestimate->amount."<hr>";
+    }
+    $compsJSON = json_encode($comps);
+    // echo("<hr>PRINT_R: <pre>");
+    // print_r($compsJSON);
+    // echo("</pre>");
 
-    return $app['twig']->render('results.twig', array('today' => $today, 'property' => $property, 'img' => $img));
+
+    return $app['twig']->render('results.twig', array('today' => $today, 'property' => $property, 'img' => $img, 'comps' => $comps));
   });
 
   return $app;
