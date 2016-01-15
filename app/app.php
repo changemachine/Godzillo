@@ -3,26 +3,13 @@
   require_once __DIR__."/../src/zillow.php";
   date_default_timezone_set('America/Los_Angeles');
   setlocale(LC_MONETARY, 'en_US');
-
   $app = new Silex\Application();
   $app->register(new Silex\Provider\TwigServiceProvider(), array('twig.path' => '../views'));
 
-//
-  // function searchFor($addr, $city){
-  //     $zillow_id = 'X1-ZWz1f41r2rdsln_7hp6b';
-  //   //Get search
-  //     $address = urlencode($addr);
-  //     $citystatezip = urlencode($city);
-  //   //Build search into a url
-  //     $url = "http://www.zillow.com/webservice/GetSearchResults.htm?zws-id=$zillow_id&address=$address&citystatezip=$citystatezip";
-  //   // API request, response
-  //     $result = file_get_contents($url);
-  //     $data = simplexml_load_string($result);
-  // }
-
-function priceFormat($number){
-  $price = money_format('%i', $number) . "\n";
-}
+// DO IN TWIG
+// function priceFormat($number){
+//   $price = money_format('%i', $number) . "\n";
+// }
 
 //Home
   $app->get("/", function() use ($app) {
@@ -49,19 +36,20 @@ function priceFormat($number){
     $results = $s->getSearchResults($address, $citystate);
     $property = $results->current();
     $img = $property->chart->url;
-    /* Can't use $p->ch->url in twig. Matter of 'pre-instanciation'?
+    /* Can't use $p->ch->url in twig. Eh?
     isset? http://twig.sensiolabs.org/doc/recipes.html#using-dynamic-object-properties */
+
     $comps = [];
     foreach($property->comps as $comp) {// formerly "as key=>value pair"
       array_push($comps, $comp);
       // echo "<img src='".$comp->chart->url."'></img> | ".$comp->address." | $".$comp->zestimate->amount."<hr>";
     }
     $compsJSON = json_encode($comps);
+
+
     // echo("<hr>PRINT_R: <pre>");
     // print_r($compsJSON);
     // echo("</pre>");
-
-
     return $app['twig']->render('results.twig', array('today' => $today, 'property' => $property, 'img' => $img, 'comps' => $comps));
   });
 

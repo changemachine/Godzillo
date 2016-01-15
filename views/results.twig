@@ -42,12 +42,11 @@
           <small>Zillow estimate for </small>
           {{ property.street }}
         </h4>
+
         <figure class="panel">
           <img src="{{ img }}"></img> <figcaption>5-year Price Trend</figcaption>
         </figure>
-        <em>${{ property.zestimate.amount | number_format }}
-          <button class='btn btn-xs btn-success'><i class="fa fa-shopping-cart"></i></button>
-        </em>
+        <em>${{ property.zestimate.amount | number_format }}</em>
         <h6 class="text-muted">
           (Zillow ID {{ property.zpid }} last updated {{ property.zestimate.lastUpdated }})
         </h6>
@@ -79,17 +78,19 @@
 
 
       <div class="comps row"><hr>
-        <div id="map" style="height: 180px;"></div>
+        <div id="map" style="height: 200px;"></div>
         <h2>Similar Homes</h2>
 
         {% for comp in comps %}
           <hr>
-          <div class="comp row" id="{{comp.zpid}}" data-lat="{{comp.latitude}}" data-long="{{comp.longitude}}">
+          <div class="comp row" id="{{comp.zpid}}" data-latlong="[{{comp.latitude}},{{comp.longitude}}]">
           <h3>{{ comp.street }}
             <small>is valued at:</small>
             ${{ comp.zestimate.amount | number_format }}
           </h3>
-          {{comp.latitude}}
+
+          {{comp.latitude}}-------------------------
+
           <h3>{{ comp.chart.url }}</h3>
 
           </div>
@@ -111,37 +112,52 @@
 
   <!-- ********** MAPS ************* -->
     <script>
-    // LEAFLET ----
-    //     var map = L.map('map').setView([51.505, -0.09], 13);
-    //       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    //         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    //         maxZoom: 18,
-    //         id: 'your.mapbox.project.id',
-    //         accessToken: 'your.mapbox.public.access.token'
-    //       }).addTo(map);
-    //
-  // MAPBOX REQUIRES JS & CSS IN HEADER + <div id='maps'>
-      mapboxgl.accessToken = 'pk.eyJ1IjoibWVnYWZhdW5hIiwiYSI6ImNpamV1NHpjczAwMGR1Nm01Z2UwYmQ1NzQifQ.FzHJForz0fEwjqHXPOkjOg';
-      var map = new mapboxgl.Map({
-        container: 'map', // container id
-        style: 'mapbox://styles/mapbox/streets-v8', //stylesheet location
-        center: [-74.50, 40], // starting position
-        zoom: 9 // starting zoom
-      });
+    var searchAddress = [{{ property.longitude }}, {{ property.latitude }}];
 
-  // MAPQUEST ----
-      // window.onload = function() {
-      //   var latitude = {{ comp.latitude }};
-      //   var longitude = 'gato';
-      //   console.log(longitude);
-      //   // var longitude = 40.731701;
-      //   // var latitude = -73.993411;
-      //   // L.map('map', {
-      //   //   layers: MQ.mapLayer(),
-      //   //   center: [ longitude, latitude ],
-      //   //   zoom: 12
-      //   // });
-      // };
+//     var comps = document.querySelectorAll(".comp");
+//     for(var comp in comps){
+//     }
+//
+//
+//
+//
+    var mapboxObj = { container: 'map', style: 'mapbox://styles/mapbox/streets-v8', center: searchAddress , zoom: 14 };
+    console.log(mapboxObj.center);
+
+
+
+
+
+    // MAPBOX REQUIRES JS & CSS IN HEADER + <div id='maps'>
+      mapboxgl.accessToken = 'pk.eyJ1IjoibWVnYWZhdW5hIiwiYSI6ImNpamV1NHpjczAwMGR1Nm01Z2UwYmQ1NzQifQ.FzHJForz0fEwjqHXPOkjOg';
+      var map = new mapboxgl.Map(mapboxObj);
+
+
+
+
+      // LEAFLET ----
+      //     var map = L.map('map').setView([51.505, -0.09], 13);
+      //       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+      //         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      //         maxZoom: 18,
+      //         id: 'your.mapbox.project.id',
+      //         accessToken: 'your.mapbox.public.access.token'
+      //       }).addTo(map);
+      //
+
+      // MAPQUEST ----
+        // window.onload = function() {
+        //   var latitude = {{ propterty.latitude }};
+        //   var longitude = {{ propterty.longitude }};
+        //   console.log(longitude);
+        //   // var longitude = 40.731701;
+        //   // var latitude = -73.993411;
+        //   // L.map('map', {
+        //   //   layers: MQ.mapLayer(),
+        //   //   center: [ longitude, latitude ],
+        //   //   zoom: 12
+        //   // });
+        // };
 
   </script>
   <!-- // SCRIPTS -->
