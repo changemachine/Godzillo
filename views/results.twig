@@ -5,23 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta content="description" name="James Nielson is a web developer and media production professional.">
 
-  <title>Webcraft &amp; Media Dev</title>
+  <title>Godzillo!</title>
 
   <!-- CSS & STYLES & FONTS & ETCETERAS ===================================  -->
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto+Slab">
   <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
   <!-- <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'> -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/simple-slideshow-styles.css">
 
-  <!-- MAPQUEST -->
+  <!-- MAPS -->
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-    <script src="http://www.mapquestapi.com/sdk/leaflet/v2.s/mq-map.js?key=K4OGBs1aRYREz4KccYBSm91HsSenZZze"></script>
+    <!-- <script src="http://www.mapquestapi.com/sdk/leaflet/v2.s/mq-map.js?key=K4OGBs1aRYREz4KccYBSm91HsSenZZze"></script> -->
     </script>
-  <!-- MAPBOX -->
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.2/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.2/mapbox-gl.css' rel='stylesheet' />
   <!-- JS -->
@@ -75,8 +71,6 @@
         </section><!-- /panel -->
       </div>
 
-
-
       <div class="comps row"><hr>
         <div id="map" style="height: 200px;"></div>
         <h2>Similar Homes</h2>
@@ -104,35 +98,121 @@
 
     </div><!-- /CONTAINER -->
   </main><!-- /MAIN -->
-  <!-- SCRIPTS TODO: REMOVE DEV SCRIPT -->
-      <script   src="http://localhost:35729/livereload.js"></script>
-    <!-- UTILITIES AND SUCHAS -->
-      <script src="js/jquery-2.1.4.min.js"></script>
-      <script src="js/bootstrap.min.js"></script>
 
-  <!-- ********** MAPS ************* -->
-    <script>
+  <!-- SCRIPTS ============================================================= -->
+    <!-- TODO: REMOVE DEV SCRIPT -->
+      <script src="http://localhost:35729/livereload.js"></script>
+      <script src="../js/jquery-2.2.0.min.js"></script>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWVnYWZhdW5hIiwiYSI6ImNpamV1NHpjczAwMGR1Nm01Z2UwYmQ1NzQifQ.FzHJForz0fEwjqHXPOkjOg';
     var searchAddress = [{{ property.longitude }}, {{ property.latitude }}];
 
-//     var comps = document.querySelectorAll(".comp");
-//     for(var comp in comps){
-//     }
-//
-//
-//
-//
-    var mapboxObj = { container: 'map', style: 'mapbox://styles/mapbox/streets-v8', center: searchAddress , zoom: 14 };
-    console.log(mapboxObj.center);
+    var comps = JSON.parse( '{{ comps|raw }}' );
+    // console.log(comps[0]);
 
+    var markers = {
+        "type": "FeatureCollection",
+        "features": [
+          { "type": "Feature",
+            "properties": {
+                "description": "<div class=\"marker-title\">{{ property.street }}</div><p>${{ property.zestimate.amount|number_format }}</p><p>1 BEDS, 5 BATHS</p>",
+                "marker-symbol": "star"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": searchAddress
+            }
+        },
+        ]
+    };
 
+    for(var i=0; i < comps.length; i++){
+      // FEATURES: { "type": "Feature",
+      // "properties": {
+      //    "description": "<div class=\"marker-title\">Make it Mount Pleasant</div>",
+      //    "marker-symbol": "theatre"
+      // },
+      // "geometry": {
+      //     "type": "Point",
+      //     "coordinates": [-77.038659, 38.931567]
+      // }
+      // },
+      var feature = {};
+      feature.type = "Feature";
+      feature.properties = {};
+        feature.properties.description = comps[i].street;
+        feature.properties['marker-symbol'] = "circle-stroked";
+        feature.properties['marker-color'] = "#ff8888";
+      feature.geometry = {};
+        feature.geometry.type = "Point";
+        feature.geometry.coordinates = [ comps[i].longitude , comps[i].latitude ];
 
+      //PUSH FEATURE INTO MARKERS ARRAY
+      markers.features.push(feature);
+    };
+    // console.log(markers);
 
+    //BUILD MAP ==================================
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v8',
+        center: searchAddress,
+        zoom: 14
+    });
+    //PREVIOUSLY
+      // var mapboxObj = {
+      //   container: 'map',
+      //   style: 'mapbox://styles/mapbox/streets-v8',
+      //   center: searchAddress ,
+      //   zoom: 14
+      // };
 
-    // MAPBOX REQUIRES JS & CSS IN HEADER + <div id='maps'>
-      mapboxgl.accessToken = 'pk.eyJ1IjoibWVnYWZhdW5hIiwiYSI6ImNpamV1NHpjczAwMGR1Nm01Z2UwYmQ1NzQifQ.FzHJForz0fEwjqHXPOkjOg';
-      var map = new mapboxgl.Map(mapboxObj);
+    map.on('style.load', function () {
+        // Add marker data as a new GeoJSON source.
+        map.addSource("markers", {
+            "type": "geojson",
+            "data": markers
+        });
 
+        // Add a layer showing the markers.
+        map.addLayer({
+            "id": "markers",
+            "interactive": true,
+            "type": "symbol",
+            "source": "markers",
+            "layout": {
+                "icon-image": "{marker-symbol}-15"
+            }
+        });
+    });
 
+    // On click near a marker icon, open a popup at marker, with description from properties.
+    map.on('click', function (e) {
+        map.featuresAt(e.point, {layer: 'markers', radius: 10, includeGeometry: true}, function (err, features) {
+            if (err || !features.length)
+                return;
+
+            var feature = features[0];
+
+            new mapboxgl.Popup()
+                .setLngLat(feature.geometry.coordinates)
+                .setHTML(feature.properties.description)
+                .addTo(map);
+        });
+    });
+
+    // Change cursor style to 'pointer'.
+    map.on('mousemove', function (e) {
+        map.featuresAt(e.point, {layer: 'markers', radius: 10}, function (err, features) {
+            map.getCanvas().style.cursor = (!err && features.length) ? 'pointer' : '';
+        });
+    });
+
+    // MAPBOX REQUIRES JS & CSS IN HEADER, AND a <div id='maps'>
+      // mapboxgl.accessToken = 'pk.eyJ1IjoibWVnYWZhdW5hIiwiYSI6ImNpamV1NHpjczAwMGR1Nm01Z2UwYmQ1NzQifQ.FzHJForz0fEwjqHXPOkjOg';
+      // PREVIOUSLY: defined mapboxObj then passed that to var map AFTER creating key ^
+      // var map = new mapboxgl.Map(mapboxObj);
 
 
       // LEAFLET ----
@@ -159,7 +239,7 @@
         //   // });
         // };
 
-  </script>
+    </script>
   <!-- // SCRIPTS -->
 </body>
 </html>

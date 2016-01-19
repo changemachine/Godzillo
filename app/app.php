@@ -6,10 +6,11 @@
   $app = new Silex\Application();
   $app->register(new Silex\Provider\TwigServiceProvider(), array('twig.path' => '../views'));
 
-// DO IN TWIG
-// function priceFormat($number){
-//   $price = money_format('%i', $number) . "\n";
-// }
+//TODO:
+// REST API TESTING: http://reqres.in/
+// http://www.mindfiresolutions.com/Google-RETS-ZILLOW-API.htm
+// http://www.mindfiresolutions.com/Google-RETS-ZILLOW-API.htm
+// http://www.mindfiresolutions.com/Google-RETS-ZILLOW-API.htm
 
 //Home
   $app->get("/", function() use ($app) {
@@ -19,7 +20,6 @@
     $s = new VerticalTab\Pillow\Service($key);
     $results = $s->getSearchResults('8125 NE Wygant St', '97218');
     $property = $results->current();
-    // echo "<img src='" . $property->chart->url . "'></img><br>";
 
     return $app['twig']->render('home.twig', array('today' => $today));
   });
@@ -34,23 +34,31 @@
     $key = 'X1-ZWz1f41r2rdsln_7hp6b';
     $s = new VerticalTab\Pillow\Service($key);
     $results = $s->getSearchResults($address, $citystate);
+    $urlParams = $s->getSearchResults($address, $citystate, true);
     $property = $results->current();
+    //--------------------------------------
     $img = $property->chart->url;
-    /* Can't use $p->ch->url in twig. Eh?
-    isset? http://twig.sensiolabs.org/doc/recipes.html#using-dynamic-object-properties */
+    $url = "http://www.zillow.com".$urlParams;
+    // $allData = json_encode(simplexml_load_string(file_get_contents($url)));
 
-    $comps = [];
-    foreach($property->comps as $comp) {// formerly "as key=>value pair"
-      array_push($comps, $comp);
-      // echo "<img src='".$comp->chart->url."'></img> | ".$comp->address." | $".$comp->zestimate->amount."<hr>";
+
+
+    $compsArray = [];
+    foreach($property->comps as $comp) {
+      array_push($compsArray, $comp);
+      // $compLongLat = [$comp->longitude, $comp->latitude];
+      // $compZPID = $comp->zpid;
+      // $compEst = $comp->zestimate->amount;
+      // $compDeets = SqFt, Beds/Baths;
     }
-    $compsJSON = json_encode($comps);
+    $comps = json_encode($compsArray);
 
 
-    // echo("<hr>PRINT_R: <pre>");
-    // print_r($compsJSON);
-    // echo("</pre>");
-    return $app['twig']->render('results.twig', array('today' => $today, 'property' => $property, 'img' => $img, 'comps' => $comps));
+
+// DUMP -----------------------------------
+// var_dump($comps);
+
+    return $app['twig']->render('results.twig', array('today' => $today, 'property' => $property, 'img' => $img, 'comps' => $comps ));
   });
 
   return $app;

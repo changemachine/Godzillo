@@ -1,6 +1,6 @@
 <?php
 /*****************************************************************************
-See also: http://php.net/manual/en/datetime.createfromformat.php
+ROLL YOUR OWN (WITHOUT PILLOW)  See also: http://php.net/manual/en/datetime.createfromformat.php
 *****************************************************************************/
 
     // class PropSearch {
